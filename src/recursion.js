@@ -320,18 +320,19 @@ var countValuesInObj = function(object, value) {
 // 24. Find all keys in an object (and nested objects) by a provided name and rename
 // them to a provided new name while preserving the value stored at that key.
 var replaceKeysInObj = function(object, oldKey, newKey) {
-  function helper(obj,old,new){
+  function helper(obj){
     for(var key in obj){
-      if(key === old){
-        obj[new] = obj[key];
-        delete obj.key;
+      if(key === oldKey){
+        obj[newKey] = obj[key];
+        delete obj[key];
+        key = newKey;
       }
       if(typeof obj[key] === 'object' && !(Array.isArray(obj[key]))){
         helper(obj[key]);
       }
     }
   }
-  helper(object,oldKey,newKey);
+  helper(object);
   return object;
 };
 
@@ -341,6 +342,13 @@ var replaceKeysInObj = function(object, oldKey, newKey) {
 // fibonacci(5); // [0,1,1,2,3,5]
 // Note: The 0 is not counted.
 var fibonacci = function(n) {
+  return result = [];
+  function helper(num){
+    if(n <= 2) return 1;
+    result.push(fibonacci(n-1) + fibonacci(n-2))
+  }
+  helper(n);
+  return result.reverse();
 };
 
 // 26. Return the Fibonacci number located at index n of the Fibonacci sequence.
@@ -355,11 +363,33 @@ var nthFibo = function(n) {
 // var words = ['i', 'am', 'learning', 'recursion'];
 // capitalizedWords(words); // ['I', 'AM', 'LEARNING', 'RECURSION']
 var capitalizeWords = function(array) {
+  var result = [];
+  function helper(arr){
+    if(arr.length === 0) return;
+    var str = arr[0];
+    str = str.toUpperCase();
+    result.push(str);
+    helper(arr.slice(1));
+  }
+  helper(array);
+  return result;
 };
 
 // 28. Given an array of strings, capitalize the first letter of each index.
 // capitalizeFirst(['car','poop','banana']); // ['Car','Poop','Banana']
 var capitalizeFirst = function(array) {
+  var result = [];
+  function helper(arr){
+    if(arr.length === 0) return;
+    var str = arr[0];
+    var first = str[0].toUpperCase();
+    str = str.slice(1);
+    str = first+str;
+    result.push(str);
+    helper(arr.slice(1));
+  }
+  helper(array);
+  return result;
 };
 
 // 29. Return the sum of all even numbers in an object containing nested objects.
@@ -371,17 +401,56 @@ var capitalizeFirst = function(array) {
 //   e: {e: {e: 2}, ee: 'car'}
 // };
 // nestedEvenSum(obj1); // 10
-var nestedEvenSum = function(obj) {
+var nestedEvenSum = function(object) {
+  var result = 0;
+  function helper(obj){
+    for(var key in obj){
+      if(typeof obj[key] === 'number'){
+        if(obj[key] % 2 === 0){
+          result+=obj[key];
+        }
+      }
+      if(typeof obj[key] === 'object'){
+        helper(obj[key])
+      }
+    }
+  }
+  helper(object);
+  return result;
 };
 
 // 30. Flatten an array containing nested arrays.
 // flatten([1,[2],[3,[[4]]],5]); // [1,2,3,4,5]
 var flatten = function(array) {
+  var result = [];
+  function helper(arr){
+    if(arr.length === 0) return;
+    if(typeof arr[0] === 'number'){
+      result.push(arr[0]);
+    } else if(Array.isArray(arr[0])){
+      helper(arr[0]);
+    }
+    helper(arr.slice(1));
+  }
+  helper(array);
+  return result;
 };
 
 // 31. Given a string, return an object containing tallies of each letter.
 // letterTally('potato'); // {p:1, o:2, t:2, a:1}
-var letterTally = function(str, obj) {
+var letterTally = function(string) {
+  var result = {};
+  function helper(str){
+    if(str.length === 0) return;
+    if(result[str[0]]){
+      result[str[0]]++;
+    } else {
+      result[str[0]] = 1;
+    }
+    helper(str.slice(1));
+  }
+  helper(string);
+  return result;
 };
 
 // 32. Eliminate consecutive duplicates in a list. If the list contains repeated
@@ -390,18 +459,51 @@ var letterTally = function(str, obj) {
 // compress([1,2,2,3,4,4,5,5,5]) // [1,2,3,4,5]
 // compress([1,2,2,3,4,4,2,5,5,5,4,4]) // [1,2,3,4,2,5,4]
 var compress = function(list) {
+  var result = [];
+  function helper(arr){
+    if(arr.length === 0) return;
+    if(arr[0] !== result[result.length - 1]){
+      result.push(arr[0]);
+    }
+    helper(arr.slice(1));
+  }
+  helper(list);
+  return result;
 };
 
 // 33. Augment every element in a list with a new value where each element is an array
 // itself.
 // augmentElements([[],[3],[7]], 5); // [[5],[3,5],[7,5]]
 var augmentElements = function(array, aug) {
+  var result = [];
+  function helper(arr,num){
+    console.log(arr);
+    if(arr.length === 0) return;
+    if(Array.isArray(arr[0])){
+      var tempArr = arr[0];
+      tempArr.push(num);
+      result.push(tempArr);
+    }
+    helper(arr.slice(1),num);
+  }
+  helper(array,aug);
+  return result;
 };
 
 // 34. Reduce a series of zeroes to a single 0.
 // minimizeZeroes([2,0,0,0,1,4]) // [2,0,1,4]
 // minimizeZeroes([2,0,0,0,1,0,0,4]) // [2,0,1,0,4]
 var minimizeZeroes = function(array) {
+  var result = [];
+  function helper(arr){
+    if(arr.length === 0) return;
+    if(arr[0] !== result[result.length - 1]){
+      result.push(arr[0]);
+    }
+    helper(arr.slice(1));
+  }
+  helper(array);
+  return result;
 };
 
 // 35. Alternate the numbers in an array between positive and negative regardless of
@@ -409,12 +511,47 @@ var minimizeZeroes = function(array) {
 // alternateSign([2,7,8,3,1,4]) // [2,-7,8,-3,1,-4]
 // alternateSign([-2,-7,8,3,-1,4]) // [2,-7,8,-3,1,-4]
 var alternateSign = function(array) {
+  var result = [];
+  function helper(arr){
+    if(arr.length === 0) return;
+    if(result[result.length - 1] > 0){
+      result.push(-(Math.abs(arr[0])));
+    } else {
+      result.push(Math.abs(arr[0]));;
+    }
+    helper(arr.slice(1));
+  }
+  helper(array);
+  return result;
 };
 
 // 36. Given a string, return a string with digits converted to their word equivalent.
 // Assume all numbers are single digits (less than 10).
 // numToText("I have 5 dogs and 6 ponies"); // "I have five dogs and six ponies"
-var numToText = function(str) {
+var numToText = function(string) {
+  var result = [];
+  var obj = {
+    1: 'one',
+    2: 'two',
+    3: 'three',
+    4: 'four',
+    5: 'five',
+    6: 'six',
+    7: 'seven',
+    8: 'eight',
+    9: 'nine',
+  };
+  function helper(str){
+    if(str.length === 0) return;
+    if(str[0] in obj){
+      result.push(obj[str[0]]);
+    } else{
+      result.push(str[0]);
+    }
+    helper(str.slice(1));
+  }
+  helper(string);
+  return result.join("");
 };
 
 
